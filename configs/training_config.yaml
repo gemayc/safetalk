@@ -1,0 +1,32 @@
+# Configuración de ejemplo para entrenamiento
+model:
+  type: "beto"  # "baseline" o "beto"
+  name: "dccuchile/bert-base-spanish-wwm-cased"
+  max_length: 128
+  num_labels: 2
+
+training:
+  epochs: 3
+  batch_size: 16
+  learning_rate: 2.0e-5
+  warmup_steps: 500
+  weight_decay: 0.01
+  
+data:
+  train_path: "data/processed/train.csv"
+  val_path: "data/processed/val.csv"
+  test_path: "data/processed/test.csv"
+  text_column: "text"
+  label_column: "label"
+
+preprocessing:
+  lowercase: false
+  remove_urls: true
+  remove_mentions: false
+  remove_hashtags: false
+  remove_emojis: false
+
+output:
+  model_dir: "models/beto-finetuned"
+  log_dir: "logs"
+  save_strategy: "epoch"

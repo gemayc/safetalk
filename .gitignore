@@ -198,6 +198,83 @@ cython_debug/
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
 #  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
 #  refer to https://docs.cursor.com/context/ignore-files
+
+# ============================================================
+# Machine Learning & Data Science Specific
+# ============================================================
+
+# Data files
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.txt
+data/raw/*.xlsx
+data/raw/*.xls
+data/processed/*.csv
+data/processed/*.json
+data/processed/*.pkl
+data/processed/*.pickle
+*.h5
+*.hdf5
+
+# Keep directory structure but ignore data
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model files
+models/*.pt
+models/*.pth
+models/*.bin
+models/*.ckpt
+models/*.pb
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.keras
+!models/.gitkeep
+
+# Checkpoints
+checkpoints/
+*.ckpt
+
+# Tensorboard logs
+runs/
+logs/
+tb_logs/
+lightning_logs/
+
+# Weights & Biases
+wandb/
+
+# MLflow
+mlruns/
+
+# DVC
+.dvc/
+*.dvc
+
+# Hugging Face cache
+.cache/
+huggingface/
+
+# BETO model cache (fine-tuned models)
+beto-cache/
+transformers_cache/
+
+# Evaluation results
+results/
+outputs/
+predictions/
+
+# Large files in general
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# Temporary experiment files
+experiments/
+scratch/
+temp/
 .cursorignore
 .cursorindexingignore
 
