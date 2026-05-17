@@ -121,7 +121,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=src/safetalk --cov-report=html --cov-report=term"
+addopts = "-v --cov=src --cov-report=html --cov-report=term"
 
 [tool.mypy]
 python_version = "3.10"

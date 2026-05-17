@@ -282,4 +282,6 @@ temp/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-models/beto/modelo/model.safetensors
+
+# SafeTalk: modelo BETO completo (está en Hugging Face: Gemita284/safetalk-beto)
+models/beto/
