@@ -1,0 +1,86 @@
+{
+    "modelo": "BETO (dccuchile/bert-base-spanish-wwm-cased)",
+    "fecha_entrenamiento": "2026-05-10 18:01:14",
+    "hardware": "Google Colab - Tesla T4 GPU",
+    "configuracion": {
+        "learning_rate": 2e-05,
+        "batch_size": 16,
+        "epochs": 3,
+        "max_length": 128,
+        "warmup_steps": 500,
+        "weight_decay": 0.01
+    },
+    "dataset": {
+        "train": 5919,
+        "validation": 1269,
+        "test": 1269
+    },
+    "metricas_validation": {
+        "epoch_1": {
+            "accuracy": 0.8369,
+            "precision": 0.971,
+            "recall": 0.6921,
+            "f1": 0.8082
+        },
+        "epoch_2": {
+            "accuracy": 0.8731,
+            "precision": 0.9195,
+            "recall": 0.8159,
+            "f1": 0.8646
+        },
+        "epoch_3": {
+            "accuracy": 0.8747,
+            "precision": 0.9039,
+            "recall": 0.8365,
+            "f1": 0.8689
+        }
+    },
+    "metricas_test": {
+        "accuracy": 0.888100866824271,
+        "precision": 0.8961038961038961,
+        "recall": 0.8761904761904762,
+        "f1": 0.8860353130016051
+    },
+    "matriz_confusion_test": {
+        "TN": 575,
+        "FP": 64,
+        "FN": 78,
+        "TP": 552
+    },
+    "comparacion_baselines": {
+        "svm": {
+            "f1": 0.8436,
+            "fn": 104,
+            "fp": 91,
+            "total_errores": 195
+        },
+        "lightgbm": {
+            "f1": 0.8486,
+            "fn": 103,
+            "fp": 82,
+            "total_errores": 185
+        },
+        "beto": {
+            "f1": 0.8860353130016051,
+            "fn": 78,
+            "fp": 64,
+            "total_errores": 142
+        }
+    },
+    "mejoras": {
+        "vs_svm": {
+            "f1_mejora": 0.04243531300160508,
+            "fn_reduccion": 26,
+            "fp_reduccion": 27,
+            "total_errores_reduccion": 53
+        },
+        "vs_lightgbm": {
+            "f1_mejora": 0.037435313001605075,
+            "fn_reduccion": 25,
+            "fn_reduccion_porcentaje": 24.271844660194176,
+            "fp_reduccion": 18,
+            "fp_reduccion_porcentaje": 21.951219512195124,
+            "total_errores_reduccion": 43
+        }
+    }
+}
