@@ -7,8 +7,10 @@ y realiza predicciones sobre si un texto es ofensivo o no.
 
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 import logging
+
+from src.data.preprocessing import TextPreprocessor
 
 # Configurar logger para ver mensajes informativos
 logger = logging.getLogger(__name__)
@@ -22,15 +24,25 @@ class BETOClassifier:
     para predecir si un texto (o varios) son ofensivos.
     """
 
-    def __init__(self, model_path: str, tokenizer_path: str):
+    def __init__(
+        self,
+        model_path: str,
+        tokenizer_path: str,
+        preprocessor: Optional[TextPreprocessor] = None,
+    ):
         """
         Inicializa el clasificador cargando modelo y tokenizer.
 
         Args:
             model_path: Ruta a la carpeta del modelo
             tokenizer_path: Ruta a la carpeta del tokenizer
+            preprocessor: Normalizador de texto aplicado antes de tokenizar.
+                Si es None se crea uno por defecto. Pasa False explícito sólo
+                si vas a normalizar por fuera.
         """
         logger.info(f"Cargando modelo desde: {model_path}")
+
+        self.preprocessor = preprocessor if preprocessor is not None else TextPreprocessor()
 
         # Detectar si hay GPU disponible, si no usar CPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -53,7 +65,7 @@ class BETOClassifier:
 
         logger.info("Modelo BETO cargado correctamente")
 
-    def predict(self, text: str) -> Dict[str, any]:
+    def predict(self, text: str) -> Dict[str, Any]:
         """
         Predice si un texto es ofensivo.
 
@@ -63,9 +75,12 @@ class BETOClassifier:
         Returns:
             Diccionario con la predicción, confianza y probabilidades
         """
+        # Paso 0: Normalizar (leetspeak, URLs, menciones, etc.)
+        texto_limpio = self.preprocessor.clean_text(text)
+
         # Paso 1: Convertir el texto en números (tokens)
         inputs = self.tokenizer(
-            text,
+            texto_limpio,
             return_tensors="pt",      # Formato PyTorch
             padding=True,             # Rellenar si es corto
             truncation=True,          # Cortar si es muy largo
@@ -83,7 +98,7 @@ class BETOClassifier:
         probs = torch.softmax(outputs.logits, dim=1)
 
         # Paso 5: Obtener la clase con mayor probabilidad
-        prediccion_id = torch.argmax(probs, dim=1).item()
+        prediccion_id = int(torch.argmax(probs, dim=1).item())
 
         # Paso 6: Obtener el valor de confianza de esa predicción
         confianza = probs[0][prediccion_id].item()
@@ -99,7 +114,7 @@ class BETOClassifier:
             }
         }
 
-    def predict_batch(self, texts: List[str], batch_size: int = 16) -> List[Dict[str, any]]:
+    def predict_batch(self, texts: List[str], batch_size: int = 16) -> List[Dict[str, Any]]:
         """
         Predice varios textos a la vez (más eficiente).
 
@@ -116,9 +131,12 @@ class BETOClassifier:
         for i in range(0, len(texts), batch_size):
             batch = texts[i:i + batch_size]
 
+            # Normalizar antes de tokenizar (leetspeak, URLs, menciones, etc.)
+            batch_limpio = self.preprocessor.clean_batch(batch)
+
             # Tokenizar el grupo completo
             inputs = self.tokenizer(
-                batch,
+                batch_limpio,
                 return_tensors="pt",
                 padding=True,
                 truncation=True,
@@ -136,7 +154,7 @@ class BETOClassifier:
 
             # Procesar cada resultado del grupo
             for j, texto in enumerate(batch):
-                pred_id = predicciones[j].item()
+                pred_id = int(predicciones[j].item())
                 conf = probs[j][pred_id].item()
 
                 resultados.append({
