@@ -47,9 +47,8 @@ AVISAR_AL_BORRAR = True
 # False = solo funciona en grupos
 FUNCIONAR_EN_PRIVADO = True
 
-# URL de la API SafeTalk. Se puede sobrescribir con la variable de entorno
-# SAFETALK_API_URL (útil para apuntar a un Space de pruebas sin tocar el código).
-API_URL = os.getenv("SAFETALK_API_URL", "https://Gemita284-safetalk-api.hf.space")
+# URL de la API SafeTalk (desplegada en Hugging Face Spaces)
+API_URL = "https://Gemita284-safetalk-api.hf.space"
 
 # ============================================================
 
