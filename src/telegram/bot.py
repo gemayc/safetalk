@@ -35,7 +35,7 @@ load_dotenv()
 # Umbral de confianza para BORRAR un mensaje (en grupos)
 # Si la confianza es MAYOR o IGUAL a este valor, el mensaje se borra
 # Rango: 0.0 a 1.0  (ej: 0.90 = 90%)
-UMBRAL_CONFIANZA = 0.90
+UMBRAL_CONFIANZA = 0.65
 
 # ¿Avisar en el grupo cuando se borra un mensaje?
 # True  = avisa citando el contenido borrado (transparente)

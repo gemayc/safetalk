@@ -26,7 +26,9 @@ load_dotenv()
 
 # Umbral de confianza para BORRAR un mensaje en un servidor.
 # Si la confianza es MAYOR o IGUAL a este valor, el mensaje se borra.
-UMBRAL_CONFIANZA = 0.90
+# Alineado con el bot de Telegram tras la migración a BETO V2 (que devuelve
+# confianzas más bajas que V1 al estar mejor calibrado).
+UMBRAL_CONFIANZA = 0.65
 
 # ¿Avisar en el canal cuando se borra un mensaje?
 AVISAR_AL_BORRAR = True
