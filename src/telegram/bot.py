@@ -35,8 +35,7 @@ load_dotenv()
 # Umbral de confianza para BORRAR un mensaje (en grupos)
 # Si la confianza es MAYOR o IGUAL a este valor, el mensaje se borra
 # Rango: 0.0 a 1.0  (ej: 0.90 = 90%)
-UMBRAL_CONFIANZA = 0.65
-
+UMBRAL_CONFIANZA = 0.45
 # ¿Avisar en el grupo cuando se borra un mensaje?
 # True  = avisa citando el contenido borrado (transparente)
 # False = borra silenciosamente
@@ -49,7 +48,7 @@ FUNCIONAR_EN_PRIVADO = True
 
 # URL de la API SafeTalk. Se puede sobrescribir con la variable de entorno
 # SAFETALK_API_URL (útil para apuntar a un Space de pruebas sin tocar el código).
-API_URL = os.getenv("SAFETALK_API_URL", "https://Gemita284-safetalk-api.hf.space")
+API_URL = os.getenv("SAFETALK_API_URL")
 
 # ============================================================
 
