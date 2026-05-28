@@ -17,7 +17,7 @@ DISCORD_PID=$!
 echo "Bots lanzados. Discord PID: $DISCORD_PID, Telegram PID: $TELEGRAM_PID"
 
 # =========================================================
-# 4. TRUCO PARA RENDER: Levantamos un servidor web fantasma para render gratuito
+# 4.Levantamos un servidor web fantasma para render gratuito
 # =========================================================
 python -m http.server ${PORT:-10000} &
 
