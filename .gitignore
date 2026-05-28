@@ -287,3 +287,4 @@ __marimo__/
 models/beto/
 models/beto_V2/
 models/beto_V2_final/
+*.pem

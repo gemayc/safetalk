@@ -1,380 +1,645 @@
 # 🛡️ SafeTalk
 
-**Sistema de detección automática de bullying y discurso de odio en español**
-
-SafeTalk es un proyecto de Machine Learning y Deep Learning diseñado para detectar automáticamente contenido potencialmente dañino en entornos digitales donde interactúan jóvenes, como Discord, Twitter y plataformas educativas institucionales.
-
-## 📋 Descripción del Proyecto
-
-El sistema analiza **mensajes de texto** en español, identificando en tiempo real contenido de bullying y discurso de odio, alertando a moderadores para intervenir oportunamente.
-
-> **⚠️ Nota importante**: Este proyecto está enfocado **exclusivamente en el análisis de mensajes de texto**. No incluye procesamiento de audio o voz.
-
-### Características Técnicas
-
-- **Modelo Baseline**: TF-IDF + SVM como referencia de rendimiento
-- **Modelo Avanzado**: Fine-tuning sobre BETO (BERT en español del Barcelona Supercomputing Center)
-- **Enfoque**: Análisis exclusivo de mensajes de texto en español
-
-## 🚀 Guía de Configuración - Paso a Paso
-
-### Prerequisitos
-
-Antes de empezar, asegúrate de tener instalado:
-- **Python 3.10+** (recomendado 3.11 o 3.12)
-- **Git**
-- **uv** (gestor de dependencias Python ultrarrápido)
-
-### Paso 1: Instalar uv
-
-Si aún no tienes `uv` instalado:
-
-**macOS/Linux:**
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-**Windows:**
-```powershell
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-**Con pip:**
-```bash
-pip install uv
-```
-
-### Paso 2: Clonar el Repositorio
-
-```bash
-git clone git@github.com:[TU-USUARIO]/safetalk.git
-cd safetalk
-```
-
-### Paso 3: Crear Entorno Virtual con uv
-
-```bash
-# Crear entorno virtual
-uv venv
-
-# Activar el entorno virtual
-# En macOS/Linux:
-source .venv/bin/activate
-
-# En Windows:
-.venv\Scripts\activate
-```
-
-### Paso 4: Instalar Dependencias
-
-```bash
-# Instalar dependencias del proyecto
-uv pip install -e .
-
-# Instalar dependencias de desarrollo
-uv pip install -e ".[dev]"
-
-# Instalar dependencias para notebooks
-uv pip install -e ".[notebooks]"
-
-# O instalar todo junto
-uv pip install -e ".[all]"
-```
-
-### Paso 5: Descargar Modelos Adicionales (Opcional)
-
-```bash
-# Descargar modelo de lenguaje español para spaCy
-python -m spacy download es_core_news_sm
-
-# Descargar recursos de NLTK
-python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
-```
-
-### Paso 6: Verificar Instalación
-
-```bash
-# Ejecutar tests
-pytest tests/
-
-# O con coverage
-pytest tests/ --cov=src/safetalk --cov-report=html
-```
-
-### Paso 7: Configurar Pre-commit (Opcional pero Recomendado)
-
-```bash
-# Instalar pre-commit hooks
-pre-commit install
-
-# Ejecutar manualmente
-pre-commit run --all-files
-```
-
-## 📁 Estructura del Proyecto
-
-```
-safetalk/
-├── src/safetalk/          # Código fuente principal
-│   ├── models/            # Modelos ML/DL (baseline, BETO)
-│   ├── data/              # Preprocesamiento y gestión de datos
-│   └── detector.py        # Detector principal
-├── notebooks/             # Jupyter notebooks para experimentación
-├── scripts/               # Scripts de entrenamiento y evaluación
-│   ├── train_baseline.py  # Entrenar modelo TF-IDF+SVM
-│   └── train_beto.py      # Fine-tune BETO
-├── tests/                 # Tests unitarios
-├── data/                  # Datos del proyecto
-│   ├── raw/               # Datos sin procesar
-│   └── processed/         # Datos procesados
-├── models/                # Modelos entrenados guardados
-├── configs/               # Archivos de configuración
-├── pyproject.toml         # Configuración del proyecto y dependencias
-└── README.md             # Este archivo
-```
-
-## 🎯 Uso Básico
-
-### Entrenar Modelo Baseline
-
-```bash
-python scripts/train_baseline.py \
-  --data data/processed/train.csv \
-  --output models/baseline.pkl \
-  --max-features 5000
-```
-
-### Fine-tune BETO
-
-```bash
-python scripts/train_beto.py \
-  --data data/processed/train.csv \
-  --output models/beto-finetuned \
-  --epochs 3 \
-  --batch-size 16
-```
-
-### Uso Programático
-
-```python
-from safetalk.detector import BullyingDetector
-
-# Inicializar detector
-detector = BullyingDetector(model_type="beto")
-detector.load_model()
-
-# Predecir en un texto
-result = detector.predict("Este es un mensaje de ejemplo")
-print(result)
-```
-
-## 🧪 Testing
-
-```bash
-# Ejecutar todos los tests
-pytest
-
-# Con coverage
-pytest --cov=src/safetalk --cov-report=html
-
-# Ver reporte de coverage en el navegador
-open htmlcov/index.html
-```
-
-## 📊 Preparación de Datos
-
-### Formato Esperado
-
-SafeTalk espera datos en formato CSV:
-
-```csv
-text,label
-"Mensaje de ejemplo 1",0
-"Mensaje con contenido dañino",1
-```
-
-Donde:
-- `label = 0`: Mensaje no dañino
-- `label = 1`: Bullying o discurso de odio
-
-### Datasets Públicos Recomendados
-
-Para entrenar tus modelos, puedes usar estos datasets en español:
-
-**🏆 Recomendado: Hugging Face Datasets** (Más Fácil de Usar)
-
-**hate_speech_offensive (Español)**
-- 🔗 https://huggingface.co/datasets/hate_speech_offensive
-- 🇪🇸 Tweets clasificados como odio/ofensivo/neutro
-- ✅ Descarga directa, sin registro complicado
-
-**HateCheck Spanish**
-- 🔗 https://huggingface.co/datasets/Paul/hatecheck-spanish
-- 🇪🇸 Dataset de evaluación para hate speech
-- ✅ Disponible en Hugging Face
-
-**Spanish Hate Speech Dataset**
-- 🔗 Buscar en: https://huggingface.co/datasets?language=language:es&search=hate
-- 🇪🇸 Varios datasets disponibles
-
-**Desde GitHub (Acceso Directo)**
-
-**MeOffendEs**
-- 🔗 https://github.com/msang/meoffendes
-- 🇪🇸 ~4,000 tweets ofensivos
-- ✅ Descarga directa desde GitHub
-
-**HaterNet**
-- 🔗 https://github.com/gsi-upm/haterNet
-- 🇪🇸 Tweets con discurso de odio
-- ✅ Descarga directa desde GitHub
-
-**⚠️ Datasets en CodaLab (Requieren Registro)**
-
-> **Nota**: CodaLab migró a https://codalab.lisn.upsaclay.fr/. Algunos datasets antiguos pueden requerir cuenta en la nueva plataforma o no estar disponibles.
-
-**HatEval 2019 (SemEval)** - Si está disponible
-- 🔗 https://competitions.codalab.org/competitions/19935
-- 🇪🇸 ~5,000 tweets en español sobre odio
-
-### Cómo Descargar Datasets
-
-**Opción 1: Desde Hugging Face (Recomendado) 🏆**
-
-La forma más fácil usando nuestro script:
-
-```bash
-# Ver datasets disponibles
-python scripts/download_huggingface_dataset.py --list
-
-# Descargar dataset y convertir automáticamente
-python scripts/download_huggingface_dataset.py \
-  --dataset hate_speech_offensive \
-  --convert
-
-# Los archivos quedarán en data/processed/train_converted.csv
-```
-
-O manualmente con Python:
-
-```python
-from datasets import load_dataset
-import pandas as pd
-
-# Descargar dataset
-dataset = load_dataset("hate_speech_offensive")
-
-# Guardar como CSV
-train_df = pd.DataFrame(dataset['train'])
-train_df.to_csv('data/raw/huggingface_train.csv', index=False)
-```
-
-**Opción 2: Desde GitHub**
-
-```bash
-# Clonar repositorio con dataset
-git clone https://github.com/msang/meoffendes.git
-
-# Copiar datos a tu proyecto
-cp meoffendes/data/*.csv data/raw/
-
-# Convertir al formato SafeTalk
-python scripts/convert_dataset.py \
-  --input data/raw/[archivo].csv \
-  --output data/processed/train.csv
-```
-
-**Opción 3: Desde CodaLab (Si está disponible)**
-
-> ⚠️ **Problema Conocido**: CodaLab migró a https://codalab.lisn.upsaclay.fr/. 
-> Los datasets antiguos pueden requerir cuenta en la nueva plataforma o no estar disponibles.
-> **Recomendamos usar Hugging Face (Opción 1)** que es más directo.
-
-### Convertir Dataset al Formato SafeTalk
-
-Si descargaste desde GitHub u otra fuente:
-
-```bash
-# Conversión automática (detecta columnas)
-python scripts/convert_dataset.py \
-  --input data/raw/original_train.csv \
-  --output data/processed/train.csv
-
-# Conversión manual (especificando columnas)
-python scripts/convert_dataset.py \
-  --input data/raw/original_train.csv \
-  --output data/processed/train.csv \
-  --mode manual \
-  --text-col "text" \
-  --label-col "HS"
-```
-
-## 🤝 Colaboración en Equipo
-
-### Flujo de Trabajo Git
-
-1. **Crear una rama para tu feature:**
-   ```bash
-   git checkout -b feature/nombre-feature
-   ```
-
-2. **Hacer commits descriptivos:**
-   ```bash
-   git add .
-   git commit -m "feat: descripción clara del cambio"
-   ```
-
-3. **Sincronizar con el repositorio remoto:**
-   ```bash
-   git pull origin main
-   git push origin feature/nombre-feature
-   ```
-
-4. **Crear Pull Request** en GitHub para revisión
-
-### Convenciones de Commits
-
-Usamos [Conventional Commits](https://www.conventionalcommits.org/):
-
-- `feat:` Nueva funcionalidad
-- `fix:` Corrección de bug
-- `docs:` Cambios en documentación
-- `test:` Añadir o modificar tests
-- `refactor:` Refactorización de código
-- `style:` Formateo, estilo de código
-- `chore:` Tareas de mantenimiento
-
-## 🛠️ Herramientas de Desarrollo
-
-- **Formateo**: `black` y `ruff`
-  ```bash
-  black src/ tests/
-  ruff check src/ tests/
-  ```
-
-- **Type checking**: `mypy`
-  ```bash
-  mypy src/
-  ```
-
-## 📚 Recursos
-
-- [BETO - BERT en español](https://github.com/dccuchile/beto)
-- [uv - Documentación](https://docs.astral.sh/uv/)
-- [Transformers - Hugging Face](https://huggingface.co/docs/transformers/)
-
-## 📝 Licencia
-
-MIT License
-
-## 👥 Equipo
-
-SafeTalk Team - AI Saturdays Project
+> Sistema de detección automática de bullying y discurso de odio en español, integrado en Telegram y Discord.
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Model](https://img.shields.io/badge/Model-BETO%20V2__FINAL-teal)](https://huggingface.co/Gemita284/safetalk-beto-v2)
+[![API](https://img.shields.io/badge/API-HuggingFace%20Spaces-orange)](https://huggingface.co/spaces/Gemita284/safetalk-api)
+[![Bots](https://img.shields.io/badge/Bots-AWS%20EC2%20%C2%B7%2024%2F7-yellow)](https://aws.amazon.com/ec2/)
 
 ---
 
-**¡Importante!** Este proyecto aborda un problema social real. Asegúrate de:
-- Manejar los datos con responsabilidad y ética
-- Proteger la privacidad de los usuarios
-- Considerar sesgos en los modelos
-- Usar el sistema como herramienta de apoyo, no como juez único
+## ¿Qué es SafeTalk?
+
+SafeTalk es un prototipo de sistema de inteligencia artificial que detecta mensajes de bullying y discurso de odio en español en tiempo real. Cuando alguien manda un mensaje ofensivo en un grupo, el bot lo detecta, lo elimina y avisa al grupo automáticamente.
+
+**Lo que hace diferente a SafeTalk:**
+
+- Detecta técnicas de ofuscación reales: `gilip0llas`, `g1l1p0ll4s`, `puuuuuta`
+- Entiende el contexto: `"no eres tonto"` ≠ `"eres tonto"`
+- Funciona en Telegram y Discord simultáneamente
+- API REST pública desplegada en Hugging Face Spaces
+
+---
+
+## Arquitectura
+
+```
+Usuario en Telegram/Discord
+         ↓
+   Bot (Telegram / Discord)
+   [AWS EC2 · Docker · 24/7]
+         ↓  HTTP POST /predict
+   API REST (FastAPI · HF Spaces)
+         ↓
+   TextPreprocessor (anti-ofuscación)
+         ↓
+   BETO V2_FINAL (Hugging Face Hub)
+         ↓
+   Predicción: ofensivo / no ofensivo + confianza
+```
+
+---
+
+## Estructura del proyecto
+
+```
+safetalk/
+├── configs/
+│   └── training_config.yaml           # Configuración del entrenamiento BETO
+├── data/
+│   └── processed/                     # Datasets procesados (train/val/test)
+├── deploy/                            # Configuración de despliegue (HF Space)
+├── models/                            # Modelos locales (en .gitignore)
+│   └── beto_v2_final/
+│       ├── modelo/
+│       └── tokenizer/
+├── notebooks/                         # Jupyter notebooks del proyecto
+│   ├── 01_analisis_dataset_zenodo.ipynb          # Análisis exploratorio dataset Zenodo
+│   ├── 01_exploracion_dataset_safetalk_completo.ipynb  # Exploración dataset completo
+│   ├── 02_limpieza_clase_0.ipynb                 # Limpieza de la clase no ofensiva
+│   ├── 03_limpieza_textos.ipynb                  # Limpieza y normalización de textos
+│   ├── 04_generar_sinteticos_chatgpt.ipynb       # Generación de datos sintéticos con GPT
+│   ├── 05_combinar_dataset_final.ipynb           # Combinación del dataset final
+│   ├── 06_dividir_train_val_test.ipynb           # Split train/val/test
+│   ├── 07_baseline_tfidf_svm.ipynb               # Baseline SVM + TF-IDF
+│   ├── 08_baseline_lightgbm_optuna.ipynb         # Baseline LightGBM + Optuna
+│   ├── 09_beto_finetuning.ipynb                  # Fine-tuning BETO V1
+│   ├── 10_test_beto_local.ipynb                  # Test del modelo BETO en local
+│   ├── 11_Beto_V2_preprocesado.ipynb             # Entrenamiento BETO V2
+│   └── 12_Beto_V2_final.ipynb                    # Entrenamiento BETO V2_FINAL
+├── results/                           # Métricas y gráficas guardadas
+├── scripts/
+│   ├── preprocess_and_split_v2.py     # Preprocesa dataset y genera splits V2
+│   ├── verify_preprocessing.py        # Verifica impacto del preprocesado
+│   └── sync_hf_space.sh               # Sincroniza código con HF Space
+├── src/
+│   ├── api/
+│   │   ├── main.py                    # API FastAPI
+│   │   └── schemas.py                 # Schemas Pydantic
+│   ├── data/
+│   │   └── preprocessing.py           # TextPreprocessor (anti-ofuscación)
+│   ├── discord_bot/
+│   │   └── bot.py                     # Bot de Discord
+│   ├── models/
+│   │   ├── beto_classifier.py         # Clasificador BETO
+│   │   └── predictor.py               # Predictor unificado
+│   └── telegram/
+│       └── bot.py                     # Bot de Telegram
+├── tests/
+│   └── test_preprocessing.py          # Tests del preprocesador
+├── .env.example                       # Variables de entorno de ejemplo
+├── .gitignore
+├── CONTRIBUTING.md                    # Guía de contribución
+├── Dockerfile                         # Orquesta ambos bots en producción
+├── LICENSE                            # Licencia MIT
+├── Makefile                           # Comandos útiles de desarrollo
+├── NOTES.md                           # Notas internas del proyecto
+├── pyproject.toml                     # Dependencias del proyecto
+├── QUICKSTART.md                      # Guía rápida de inicio
+├── README.md
+├── run_api.py                         # Lanza la API en local
+├── start.sh                           # Arranca Telegram + Discord + servidor fantasma
+└── uv.lock                            # Lockfile de dependencias
+```
+
+---
+
+## Requisitos previos
+
+- Python 3.10 o superior
+- [uv](https://github.com/astral-sh/uv) (gestor de paquetes ultrarrápido)
+- Cuenta en [Hugging Face](https://huggingface.co)
+- Token de bot de Telegram (via [@BotFather](https://t.me/BotFather))
+- Token de bot de Discord (via [Discord Developer Portal](https://discord.com/developers/applications))
+
+---
+
+## Instalación
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Gemita284/safetalk.git
+cd safetalk
+```
+
+### 2. Crear entorno virtual e instalar dependencias
+
+```bash
+uv venv .venv
+source .venv/bin/activate        # Linux/Mac
+# .venv\Scripts\activate         # Windows
+
+uv pip install -r pyproject.toml
+```
+
+### 3. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+Edita `.env` con tus credenciales:
+
+```env
+# ── Telegram ──────────────────────────────────────
+TELEGRAM_BOT_TOKEN=tu_token_de_telegram
+
+# ── Discord ───────────────────────────────────────
+DISCORD_BOT_TOKEN=tu_token_de_discord
+
+# ── SafeTalk API ──────────────────────────────────
+API_URL=https://Gemita284-safetalk-api.hf.space
+
+# ── Detección ─────────────────────────────────────
+UMBRAL_CONFIANZA=0.70       # Umbral para borrar mensajes (0.0 - 1.0)
+
+# ── Hugging Face ──────────────────────────────────
+HF_TOKEN=tu_token_de_huggingface
+
+# ── OpenAI (opcional, para generación de datos) ───
+OPENAI_API_KEY=tu_api_key_de_openai
+```
+
+---
+
+## Uso en local
+
+### Lanzar solo la API
+
+```bash
+python run_api.py
+```
+
+La API estará disponible en `http://localhost:8000`. Puedes probarla en:
+
+```
+http://localhost:8000/docs
+```
+
+Ejemplo de llamada:
+
+```bash
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"texto": "eres un gilipollas"}'
+```
+
+Respuesta:
+
+```json
+{
+  "prediccion": "ofensivo",
+  "confianza": 0.9876,
+  "probabilidades": {
+    "no_ofensivo": 0.0124,
+    "ofensivo": 0.9876
+  }
+}
+```
+
+### Lanzar el bot de Telegram
+
+```bash
+python src/telegram/bot.py
+```
+
+### Lanzar el bot de Discord
+
+```bash
+python src/discord_bot/bot.py
+```
+
+### Lanzar ambos bots a la vez
+
+```bash
+bash start.sh
+```
+
+---
+
+## Despliegue con Docker
+
+El `Dockerfile` orquesta ambos bots (Telegram y Discord) en un único contenedor. Incluye un servidor HTTP fantasma para mantener el servicio activo en plataformas gratuitas como Render.
+
+### Build de la imagen
+
+```bash
+docker build -t safetalk .
+```
+
+### Ejecutar el contenedor
+
+```bash
+docker run --env-file .env safetalk
+```
+
+### Variables de entorno en Docker
+
+Asegúrate de pasar todas las variables del `.env` al contenedor. Si usas Render u otra plataforma, configúralas en el panel de la plataforma.
+
+---
+
+## Despliegue en AWS EC2 (producción)
+
+Los bots de Telegram y Discord están desplegados en una instancia de **AWS EC2** mediante Docker, funcionando **24/7**.
+
+### Requisitos de la instancia
+
+- Tipo recomendado: `t2.micro` (free tier) o superior
+- SO: Ubuntu 22.04 LTS
+- Docker instalado
+
+### Pasos de despliegue
+
+**1. Conectar a la instancia EC2**
+
+```bash
+ssh -i tu-clave.pem ubuntu@tu-ip-ec2
+```
+
+**2. Instalar Docker en la instancia**
+
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ubuntu
+```
+
+**3. Clonar el repositorio**
+
+```bash
+git clone https://github.com/Gemita284/safetalk.git
+cd safetalk
+```
+
+**4. Crear el archivo `.env`**
+
+```bash
+cp .env.example .env
+nano .env   # Añade tus tokens y variables
+```
+
+**5. Build de la imagen**
+
+```bash
+docker build -t safetalk .
+```
+
+**6. Lanzar el contenedor en segundo plano**
+
+```bash
+docker run -d \
+  --name safetalk-bots \
+  --restart always \
+  --env-file .env \
+  safetalk
+```
+
+El flag `--restart always` garantiza que los bots se reinicien automáticamente si la instancia se reinicia o si el contenedor falla.
+
+**7. Verificar que está corriendo**
+
+```bash
+docker ps
+docker logs safetalk-bots
+```
+
+### Actualizar a una nueva versión
+
+Cuando haya cambios en el código:
+
+```bash
+cd safetalk
+git pull
+docker stop safetalk-bots
+docker rm safetalk-bots
+docker build -t safetalk .
+docker run -d \
+  --name safetalk-bots \
+  --restart always \
+  --env-file .env \
+  safetalk
+```
+
+### Arquitectura de despliegue
+
+```
+┌─────────────────────────────────────────┐
+│           AWS EC2 (Ubuntu)              │
+│                                         │
+│  ┌──────────────────────────────────┐   │
+│  │       Docker Container           │   │
+│  │                                  │   │
+│  │  start.sh                        │   │
+│  │    ├── src/telegram/bot.py  &    │   │
+│  │    └── src/discord_bot/bot.py &  │   │
+│  │                                  │   │
+│  └──────────────────────────────────┘   │
+│                                         │
+│  Uptime: 24/7 · --restart always        │
+└─────────────────────────────────────────┘
+         │                    │
+         ▼                    ▼
+   Telegram API         Discord API
+```
+
+## Despliegue en Render (alternativa gratuita)
+
+Si no tienes acceso a AWS EC2, puedes usar Render como alternativa gratuita:
+
+1. Conecta tu repositorio de GitHub a [Render](https://render.com)
+2. Crea un nuevo **Web Service**
+3. Selecciona **Docker** como entorno
+4. Añade las variables de entorno del `.env` en el panel de Render
+5. Render detectará el `Dockerfile` y desplegará automáticamente
+
+> El `start.sh` levanta un servidor HTTP en el puerto `$PORT` (por defecto 10000) para que Render no duerma el servicio en el plan gratuito.
+
+---
+
+## Cómo funciona el bot en un grupo
+
+### Telegram
+
+1. Añade el bot al grupo
+2. Hazlo administrador con permiso de **"Eliminar mensajes"**
+3. Desactiva el Privacy Mode en [@BotFather](https://t.me/BotFather) con `/setprivacy`
+4. El bot analizará cada mensaje y actuará si supera el umbral de confianza
+
+### Discord
+
+1. Invita el bot al servidor con los permisos `Manage Messages` y `Read Message History`
+2. El bot monitorizará los canales donde tenga acceso
+
+### ¿Qué hace cuando detecta un mensaje ofensivo?
+
+```
+1. Borra el mensaje del grupo
+2. Envía un aviso citando el contenido eliminado:
+
+   🛡️ He eliminado un mensaje ofensivo
+
+   👤 Usuario: @usuario
+   📝 "eres un gilip0llas"
+   📊 Confianza de detección: 87.6%
+```
+
+---
+
+## Modelo de IA
+
+### BETO V2_FINAL
+
+El modelo está basado en [BETO](https://huggingface.co/dccuchile/bert-base-spanish-wwm-cased), un BERT preentrenado en español por la Universidad de Chile.
+
+**Repositorio del modelo:** [Gemita284/safetalk-beto-v2](https://huggingface.co/Gemita284/safetalk-beto-v2)
+
+El modelo se descarga automáticamente en el primer arranque si no está disponible en local.
+
+### Métricas (test set independiente)
+
+| Métrica | Valor |
+|---------|-------|
+| Accuracy | 88.34% |
+| Precision | 92.73% |
+| Recall | 83.02% |
+| F1-Score | 87.60% |
+| ROC-AUC | 94.36% |
+| PR-AUC | 95.55% |
+| Overfitting (Train-Test gap) | 2.16% |
+
+### Técnicas aplicadas para reducir el overfitting
+
+- **Layer Freezing:** capas 0-7 y embeddings congelados (110M → ~25M parámetros entrenables)
+- **Early Stopping:** parada automática cuando la validation loss empeora (patience=1)
+- **Weight Decay:** regularización aumentada de 0.01 a 0.1
+
+### Evolución de modelos
+
+| Modelo | F1-Score | Overfitting |
+|--------|----------|-------------|
+| SVM + TF-IDF | 84.36% | 13.00% |
+| LightGBM + Optuna | 84.86% | 1.97% |
+| BETO V1 | 88.60% | 9.00% |
+| **BETO V2_FINAL** | **87.60%** | **2.16%** |
+
+---
+
+## Preprocesado anti-ofuscación
+
+El `TextPreprocessor` detecta y normaliza técnicas de evasión reales:
+
+| Técnica | Entrada | Salida |
+|---------|---------|--------|
+| Leetspeak básico | `gilip0llas` | `gilipollas` |
+| Leetspeak completo | `g1l1p0ll4s` | `gilipollas` |
+| Letras repetidas | `puuuuuta` | `puuta` |
+| Separadores | `g.i.l.i.p.o.l.l.a.s` | `gilipollas` |
+| Símbolo arroba | `put@` | `puta` |
+| Unicode homoglyphs | `саbrón` (с cirílico) | `cabrón` |
+
+El preprocesador también preserva el español correcto: acentos (á, é, í, ó, ú), la ñ, y acrónimos.
+
+---
+
+## API REST
+
+La API está desplegada en Hugging Face Spaces:
+
+```
+https://Gemita284-safetalk-api.hf.space
+```
+
+### Endpoints
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/` | Estado de la API |
+| `GET` | `/health` | Health check |
+| `POST` | `/predict` | Predice si un texto es ofensivo |
+| `POST` | `/predict/batch` | Predice múltiples textos |
+
+### Ejemplo `/predict`
+
+```bash
+curl -X POST "https://Gemita284-safetalk-api.hf.space/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"texto": "hola buenos días"}'
+```
+
+---
+
+## Flujo de notebooks
+
+Los notebooks están numerados en orden de ejecución y documentan todo el proceso:
+
+| Notebook | Descripción |
+|----------|-------------|
+| `01_analisis_dataset_zenodo` | Análisis exploratorio del dataset original de Zenodo |
+| `01_exploracion_dataset_safetalk_completo` | Exploración del dataset completo combinado |
+| `02_limpieza_clase_0` | Limpieza de mensajes no ofensivos |
+| `03_limpieza_textos` | Normalización y limpieza general de textos |
+| `04_generar_sinteticos_chatgpt` | Generación de datos sintéticos con ChatGPT para balancear clases |
+| `05_combinar_dataset_final` | Combinación del dataset Zenodo + sintéticos |
+| `06_dividir_train_val_test` | Split estratificado 70/15/15 (random_state=42) |
+| `07_baseline_tfidf_svm` | Baseline con SVM + TF-IDF (F1: 84.36%) |
+| `08_baseline_lightgbm_optuna` | Baseline con LightGBM + Optuna (F1: 84.86%) |
+| `09_beto_finetuning` | Fine-tuning BETO V1 en Google Colab (F1: 88.60%) |
+| `10_test_beto_local` | Pruebas del modelo BETO V1 en local |
+| `11_Beto_V2_preprocesado` | Entrenamiento BETO V2 con layer freezing + early stopping |
+| `12_Beto_V2_final` | Entrenamiento BETO V2_FINAL con dataset completo |
+
+---
+
+## Tests
+
+```bash
+pytest tests/ -v
+```
+
+Los tests cubren el `TextPreprocessor`:
+
+- Normalización de leetspeak
+- Preservación de textos inocentes
+- Preservación de acentos y ñ
+- Procesamiento en batch
+
+---
+
+## Scripts de utilidad
+
+### Verificar el preprocesado antes de entrenar
+
+```bash
+python scripts/verify_preprocessing.py
+```
+
+Comprueba que el preprocesado no rompe el dataset (textos vacíos, palabras clave preservadas).
+
+### Generar splits V2 del dataset
+
+```bash
+python scripts/preprocess_and_split_v2.py
+```
+
+Aplica el `TextPreprocessor` al dataset completo y genera `train_v2.csv`, `val_v2.csv`, `test_v2.csv` con el mismo split que V1 (random_state=42).
+
+### Sincronizar con Hugging Face Space
+
+```bash
+bash scripts/sync_hf_space.sh
+```
+
+---
+
+## Configuración del bot de Telegram
+
+Para que el bot funcione en grupos:
+
+1. Habla con [@BotFather](https://t.me/BotFather)
+2. Ejecuta `/setprivacy` → selecciona tu bot → **DISABLE**
+3. Añade el bot al grupo
+4. Hazlo **administrador** con permiso de eliminar mensajes
+
+El Privacy Mode debe estar **desactivado** para que el bot pueda leer mensajes de grupo.
+
+---
+
+## Variables de entorno (referencia completa)
+
+| Variable | Descripción | Requerida |
+|----------|-------------|-----------|
+| `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram | ✅ |
+| `DISCORD_BOT_TOKEN` | Token del bot de Discord | ✅ |
+| `API_URL` | URL de la API de SafeTalk | ✅ |
+| `UMBRAL_CONFIANZA` | Umbral de confianza para borrar (0.0-1.0) | ✅ (default: 0.70) |
+| `HF_TOKEN` | Token de Hugging Face (para subir modelos) | Solo para desarrollo |
+| `OPENAI_API_KEY` | API key de OpenAI (para generar datos) | Solo para desarrollo |
+
+---
+
+## Limitaciones conocidas
+
+- El modelo no detecta el 17% del bullying real (recall 83%)
+- Los emojis ofensivos (🖕🤡💀) no son analizados como señal
+- El sarcasmo sutil es difícil de detectar
+- Los datos de entrenamiento son parcialmente sintéticos
+
+---
+
+## Roadmap
+
+- [ ] Guardar logs de predicciones en Supabase para reentrenamiento continuo
+- [ ] Pipeline de reentrenamiento automático con datos reales
+- [ ] Dashboard de monitorización
+- [ ] Soporte de emojis (modelo multimodal)
+- [ ] Despliegue 24/7 del bot en Render
+
+---
+
+## Contribuir
+
+1. Haz fork del repositorio
+2. Crea una rama: `git checkout -b feat/mi-mejora`
+3. Haz commit de tus cambios: `git commit -m 'feat: descripción'`
+4. Push a la rama: `git push origin feat/mi-mejora`
+5. Abre un Pull Request
+
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles.
+
+---
+
+## Tecnologías
+
+| Categoría | Tecnología |
+|-----------|-----------|
+| Modelo IA | BETO (dccuchile/bert-base-spanish-wwm-cased) |
+| Framework ML | PyTorch + Hugging Face Transformers |
+| Optimización | Optuna (LightGBM baseline) |
+| API | FastAPI + Uvicorn |
+| Despliegue API | Hugging Face Spaces (Docker) |
+| Bot Telegram | python-telegram-bot |
+| Bot Discord | discord.py |
+| Despliegue bots | AWS EC2 (Docker · 24/7) |
+| Modelo Hub | Hugging Face Hub |
+| Entrenamiento | Google Colab (Tesla T4 GPU) |
+| Contenedor | Docker + uv |
+| Control versiones | GitHub |
+| Lenguaje | Python 3.12 |
+
+---
+
+## Licencia
+
+MIT License — consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+
+-----
+
+## 👥 Equipo
+
+Este proyecto fue desarrollado por el **Equipo-Saturdays**:
+
+| Nombre |  
+| :--- |
+| **Gema Yébenes** | 
+| **Camila Arenas** | 
+| **Alex Méndez** | 
+| **María Hetro** | 
+| **Elena Martínez** | 
+
+-----
+
+## Crédito
+
+Desarrollado como proyecto del programa **[Saturdays AI](https://www.saturdays.ai)**, una iniciativa que hace la inteligencia artificial más accesible (#ai4all) mediante proyectos para el bien social (#ai4good).
+
+---
+
+*Modelo alojado en: [Gemita284/safetalk-beto-v2](https://huggingface.co/Gemita284/safetalk-beto-v2)*
+*API desplegada en: [Gemita284/safetalk-api](https://huggingface.co/spaces/Gemita284/safetalk-api)*
