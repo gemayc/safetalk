@@ -578,7 +578,6 @@ El Privacy Mode debe estar **desactivado** para que el bot pueda leer mensajes d
 - [ ] Pipeline de reentrenamiento automático con datos reales
 - [ ] Dashboard de monitorización
 - [ ] Soporte de emojis (modelo multimodal)
-- [ ] Despliegue 24/7 del bot en Render
 
 ---
 
