@@ -7,7 +7,7 @@ export PYTHONPATH=/app/src:$PYTHONPATH
 echo "Iniciando despliegue de SafeTalk Bots..."
 
 # 2. Arrancamos el bot de Telegram en segundo plano (ajusta la ruta si se llama distinto)
-python src/telegram/bot.py &
+python src/telegram_bot/bot.py &
 TELEGRAM_PID=$!
 
 # 3. Arrancamos el bot de Discord en segundo plano
