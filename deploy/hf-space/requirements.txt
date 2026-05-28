@@ -1,0 +1,12 @@
+# Framework de la API
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+
+# Modelo BETO y descargas de Hugging Face
+transformers==4.46.0
+huggingface-hub==0.26.0
+
+# PyTorch (versión CPU - más ligera, no necesitamos GPU en HF Spaces free)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.5.0
