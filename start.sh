@@ -16,9 +16,11 @@ DISCORD_PID=$!
 
 echo "Bots lanzados. Discord PID: $DISCORD_PID, Telegram PID: $TELEGRAM_PID"
 
-# 4. Esperamos a que cualquier proceso termine o falle.
-# Si uno de los bots hace 'crash', el contenedor se reiniciará automáticamente.
-wait -n
+# =========================================================
+# 4. TRUCO PARA RENDER: Levantamos un servidor web fantasma para render gratuito
+# =========================================================
+python -m http.server ${PORT:-10000} &
 
-# Salimos devolviendo el código de error correspondiente
+# 5. Esperamos a que algún proceso falle
+wait -n
 exit $?
