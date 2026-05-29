@@ -546,7 +546,7 @@ async def comando_corregir(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"DEBUG - ID QUE LLEGA DE TELEGRAM: {usuario_id} (Tipo: {type(usuario_id)})")
     print(f"DEBUG - ID GUARDADO EN AWS (.env): {MI_TELEGRAM_ID} (Tipo: {type(MI_TELEGRAM_ID)})")
     # SEGURIDAD: Solo tú puedes ejecutar este comando
-    if usuario_id != MI_TELEGRAM_ID:
+    if str(usuario_id) != str(MI_TELEGRAM_ID):
         return
 
     try:
