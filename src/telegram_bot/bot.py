@@ -424,7 +424,7 @@ AVISAR_AL_BORRAR = True
 FUNCIONAR_EN_PRIVADO = True
 
 
-MI_TELEGRAM_ID = os.getenv("MI_TELEGRAM_ID")
+MI_TELEGRAM_ID = int(os.getenv("MI_TELEGRAM_ID"))
 
 # ============================================================
 #  SISTEMA ANTI-OFUSCACIÓN (Lista Negra Ampliada, Plurales y Acentos)
